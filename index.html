@@ -34,6 +34,9 @@
             padding: 25px;
             padding-left: 40px;
         }
+        li {
+            margin: 15px;
+        }
         @media(max-width:800px) {
             #grid {
                 display:block;
@@ -47,7 +50,7 @@
 </head>
 
 <body>
-    <h1><a href="#!welcome">WEB</a></h1>
+    <h1><a href="">WEB</a></h1>
 
     <input type="button" value="night" id="colorChanger" onclick="
         dayNightChanger(this);
@@ -56,11 +59,7 @@
 
 
     <div id="grid">
-        <ol>
-            <!-- Ajax : 아래 정의한 fetchPage함수와 hash 연결-->
-            <li><a href="#!html" onclick="fetchPage('html.txt')">HTML</a></li>
-            <li><a href="#!css" onclick="fetchPage('css.txt')">CSS</a></li>
-            <li><a href="#!javaScript" onclick="fetchPage('javaScript.txt')">JavaScript</a></li>
+        <ol id="nav">
         </ol>
 
         <div id="article">
@@ -71,6 +70,8 @@
     <script>
 
         // Ajax : fetch 사용
+        // fetch API는 인터넷익스플로러(ie)에서 작동하지 않는다.
+        // ie에서 작동케 하려면, 구글에서 fetch api polyfill 이라고 검색 후, 그 결과 중 github의 관련 polyfill 찾아 적용하는 것이 편리 
         function fetchPage(_fileName){
             fetch(_fileName).then((respond)=>{
                 respond.text().then((_text)=>{
@@ -85,6 +86,19 @@
         } else {
             fetchPage('welcome.txt');
         }
+
+        // Ajax : 글목록 구현하기
+        fetch('list.txt').then((respond)=>{
+            respond.text().then((_text)=>{
+                let items = _text.split(',');
+                let tags = '';
+                items.forEach(element => {
+                    const item = element.trim();
+                    tags += '<li><a href="#!'+item+'" onclick="fetchPage(\''+item+'.txt\')">'+item+'</a></li>';  // '를 문자로 인식케 하려면 \와 함께 사용
+                });
+                document.querySelector('#nav').innerHTML=tags;
+            })
+        })
 
 
         // day night간 색 바꾸기 버튼 관련 시작
